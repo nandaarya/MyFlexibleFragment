@@ -16,7 +16,6 @@ class DetailCategoryFragment : Fragment() {
     private lateinit var tvCategoryDescription: TextView
     private lateinit var btnProfile: Button
     private lateinit var btnShowDialog: Button
-
     var description: String? = null
 
     companion object {
@@ -24,10 +23,8 @@ class DetailCategoryFragment : Fragment() {
         var EXTRA_DESCRIPTION = "extra_description"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail_category, container, false)
     }
@@ -37,35 +34,45 @@ class DetailCategoryFragment : Fragment() {
         tvCategoryName = view.findViewById(R.id.tv_category_name)
         tvCategoryDescription = view.findViewById(R.id.tv_category_description)
         btnProfile = view.findViewById(R.id.btn_profile)
+        btnProfile.setOnClickListener {
+            val mIntent = Intent(activity, ProfileActivity::class.java)
+            startActivity(mIntent)
+        }
         btnShowDialog = view.findViewById(R.id.btn_show_dialog)
+        btnShowDialog.setOnClickListener {
+            val mOptionDialogFragment = OptionDialogFragment()
+
+            val mFragmentManager = childFragmentManager
+            mOptionDialogFragment.show(mFragmentManager, OptionDialogFragment::class.java.simpleName)
+        }
 
         if (savedInstanceState != null) {
             val descFromBundle = savedInstanceState.getString(EXTRA_DESCRIPTION)
             description = descFromBundle
         }
+
         if (arguments != null) {
             val categoryName = arguments?.getString(EXTRA_NAME)
             tvCategoryName.text = categoryName
             tvCategoryDescription.text = description
         }
-
-        btnShowDialog.setOnClickListener {
-            val optionDialogFragment = OptionDialogFragment()
-            val fragmentManager = childFragmentManager
-            optionDialogFragment.show(fragmentManager, OptionDialogFragment::class.java.simpleName)
-        }
-
-        btnProfile.setOnClickListener {
-            val intent = Intent(requireActivity(), ProfileActivity::class.java)
-            startActivity(intent)
-        }
-
     }
 
-    internal var optionDialogListener: OptionDialogFragment.OnOptionDialogListener =
-        object : OptionDialogFragment.OnOptionDialogListener {
-            override fun onOptionChosen(text: String?) {
-                Toast.makeText(requireActivity(), text, Toast.LENGTH_SHORT).show()
-            }
+    /*
+    Gunakan method ini jika kita ingin menjaga data agar tetap aman ketika terjadi config changes (portrait - landscape)
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString(EXTRA_DESCRIPTION, description)
+    }
+
+    /*
+    Kode yang akan dijalankan ketika option dialog dipilih ok
+    */
+    internal var optionDialogListener: OptionDialogFragment.OnOptionDialogListener = object : OptionDialogFragment.OnOptionDialogListener {
+        override fun onOptionChosen(text: String?) {
+            Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
         }
+    }
 }

@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.commit
 
-class HomeFragment : Fragment(), View.OnClickListener {
+class HomeFragment : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -20,17 +19,19 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val btnCategory: Button = view.findViewById(R.id.btn_category)
-        btnCategory.setOnClickListener(this)
-    }
+        btnCategory.setOnClickListener {
+            /*
+            Method addToBackStack akan menambahkan fragment ke backstack
 
-    override fun onClick(v: View) {
-        if (v.id == R.id.btn_category) {
-            val categoryFragment = CategoryFragment()
-            val fragmentManager = parentFragmentManager
-            fragmentManager.beginTransaction().apply {
-                replace(R.id.frame_container, categoryFragment, CategoryFragment::class.java.simpleName)
+            Behaviour dari back button :
+            jika ada fragment di dalam backstack maka fragment yang akan di close / remove
+            jika sudah tidak ada fragment di dalam backstack maka activity yang akan di close / finish
+             */
+            val mCategoryFragment = CategoryFragment()
+            val mFragmentManager = parentFragmentManager
+            mFragmentManager.commit {
                 addToBackStack(null)
-                commit()
+                replace(R.id.frame_container, mCategoryFragment, CategoryFragment::class.java.simpleName)
             }
         }
     }

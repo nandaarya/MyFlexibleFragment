@@ -21,52 +21,62 @@ class OptionDialogFragment : DialogFragment() {
     private lateinit var rbMoyes: RadioButton
     private var optionDialogListener: OnOptionDialogListener? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_option_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btnChoose = view.findViewById(R.id.btn_choose)
-        btnClose = view.findViewById(R.id.btn_close)
-        rgOptions = view.findViewById(R.id.rg_options)
-        rbSaf = view.findViewById(R.id.rb_saf)
-        rbLvg = view.findViewById(R.id.rb_lvg)
-        rbMou = view.findViewById(R.id.rb_mou)
-        rbMoyes = view.findViewById(R.id.rb_moyes)
-
         btnChoose.setOnClickListener {
             val checkedRadioButtonId = rgOptions.checkedRadioButtonId
             if (checkedRadioButtonId != -1) {
-                var coach: String? = when (checkedRadioButtonId) {
-                    R.id.rb_saf -> rbSaf.text.toString().trim()
-                    R.id.rb_mou -> rbMou.text.toString().trim()
-                    R.id.rb_lvg -> rbLvg.text.toString().trim()
-                    R.id.rb_moyes -> rbMoyes.text.toString().trim()
-                    else -> null
+                var coach: String? = null
+                when (checkedRadioButtonId) {
+                    R.id.rb_saf -> coach = rbSaf.text.toString().trim()
+
+                    R.id.rb_mou -> coach = rbMou.text.toString().trim()
+
+                    R.id.rb_lvg -> coach = rbLvg.text.toString().trim()
+
+                    R.id.rb_moyes -> coach = rbMoyes.text.toString().trim()
                 }
                 optionDialogListener?.onOptionChosen(coach)
                 dialog?.dismiss()
             }
         }
+        btnClose = view.findViewById(R.id.btn_close)
         btnClose.setOnClickListener {
             dialog?.cancel()
         }
+        rgOptions = view.findViewById(R.id.rg_options)
+        rbSaf = view.findViewById(R.id.rb_saf)
+        rbLvg = view.findViewById(R.id.rb_lvg)
+        rbMou = view.findViewById(R.id.rb_mou)
+        rbMoyes = view.findViewById(R.id.rb_moyes)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        /*
+        Saat attach maka set optionDialogListener dengan listener dari detailCategoryFragment
+         */
         val fragment = parentFragment
+
         if (fragment is DetailCategoryFragment) {
-            this.optionDialogListener = fragment.optionDialogListener
+            val detailCategoryFragment = fragment as DetailCategoryFragment?
+            this.optionDialogListener = detailCategoryFragment?.optionDialogListener
         }
     }
+
     override fun onDetach() {
         super.onDetach()
+
+        /*
+        Saat detach maka set null pada optionDialogListener
+         */
         this.optionDialogListener = null
     }
 
